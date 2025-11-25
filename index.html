@@ -1,22 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <title>Menú de Transporte CDMX AR</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
-  <a-scene embedded arjs="trackingMethod: best; sourceType: webcam;">
-    
-    <a-marker type="pattern" url="tarjeta.patt">
 
-      <a-text value="Metro CDMX" position="-0.5 1 0" scale="2 2 2"></a-text>
+    <a-scene embedded arjs='sourceType: webcam; detectionMode: mono_and_matrix; patternRatio: 0.8;'>
 
-      <a-image src="tren_ligero.jpg" position="0 0.5 0" rotation="-90 0 0" scale="2 2 2"></a-image>
+        <a-marker type="pattern" url="tarjeta.patt">
 
-    </a-marker>
+            <a-entity position="0 0 0.05" scale="1.5 1.5 1.5"> 
+                
+                <a-plane position="0 1.0 0" 
+                         rotation="90 0 0" 
+                         width="1.8" height="2.2" 
+                         color="#002868" opacity="0.9"></a-plane>
 
-    <a-entity camera></a-entity>
+                <a-text value="MENÚ DE MOVILIDAD CDMX" 
+                        position="0 1.9 0.001" 
+                        rotation="90 0 0" 
+                        align="center" 
+                        width="2" 
+                        color="#FFFFFF"></a-text>
 
-  </a-scene>
+                <a-plane position="0 1.3 0.001" rotation="90 0 0" width="1.6" height="0.3" color="#D81E05"></a-plane>
+                <a-text value="RTP" position="0 1.3 0.002" rotation="90 0 0" align="center" width="1.5" color="#FFFFFF"></a-text>
+
+                <a-plane position="0 0.9 0.001" rotation="90 0 0" width="1.6" height="0.3" color="#FF6F00"></a-plane>
+                <a-text value="METROBÚS" position="0 0.9 0.002" rotation="90 0 0" align="center" width="1.5" color="#000000"></a-text>
+
+                <a-plane position="0 0.5 0.001" rotation="90 0 0" width="1.6" height="0.3" color="#52BE80"></a-plane>
+                <a-text value="CABLEBÚS" position="0 0.5 0.002" rotation="90 0 0" align="center" width="1.5" color="#FFFFFF"></a-text>
+
+                <a-plane position="0 0.1 0.001" rotation="90 0 0" width="1.6" height="0.3" color="#9C0000"></a-plane>
+                <a-text value="METRO" position="0 0.1 0.002" rotation="90 0 0" align="center" width="1.5" color="#FFFFFF"></a-text>
+
+                <a-plane position="0 -0.3 0.001" rotation="90 0 0" width="1.6" height="0.3" color="#019F01"></a-plane>
+                <a-text value="TREN LIGERO" position="0 -0.3 0.002" rotation="90 0 0" align="center" width="1.5" color="#FFFFFF"></a-text>
+
+            </a-entity>
+
+        </a-marker>
+
+        <a-entity camera></a-entity>
+    </a-scene>
 </body>
 </html>
