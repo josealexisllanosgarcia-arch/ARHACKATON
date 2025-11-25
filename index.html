@@ -4,21 +4,15 @@
     <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   </head>
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs>
-      
-      <!-- Marcador -->
-      <a-marker type="pattern" url="tarjeta.patt">
+<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/jeromeetienne/AR.js/master/aframe/build/aframe-ar.js"></script>
 
-        <!-- Texto flotante -->
-        <a-text value="Metro CDMX" position="-0.5 1 0" scale="2 2 2"></a-text>
-
-        <!-- Imagen del mapa -->
-        <a-image src="/tren ligero.jpg" position="0 0.5 0" rotation="-90 0 0" scale="2 2 2"></a-image>
-        
-      </a-marker>
-
-      <a-entity camera></a-entity>
-    </a-scene>
-  </body>
+<body style="margin: 0; overflow: hidden;">
+  <a-scene embedded arjs>
+    <a-marker type="pattern" url="hiro.patt">
+      <a-box position="0 0.5 0" width="1" height="1" depth="1"></a-box>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
 </html>
