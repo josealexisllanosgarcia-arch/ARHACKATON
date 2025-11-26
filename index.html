@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menú de Movilidad RA - CDMX</title>
+    <title>Mapa Interactivo RA - CDMX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -13,19 +13,53 @@
     </style>
 
     <script>
-        // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
-        function handleButtonClick(transporte) {
-            alert('¡Has presionado el botón: ' + transporte + '!');
-        }
-        
-        // 2. COMPONENTE DE ESCUCHA DE CLICS
-        AFRAME.registerComponent('button-click-handler', {
+        // 1. LISTA DE IMÁGENES Y LÓGICA DE ROTACIÓN
+        const images = ['#rtpTexture', '#metrobusTexture', '#trenLigeroTexture', '#cablebusTexture'];
+        let currentIndex = 0; // Índice de la imagen actual (RTP)
+        let rotating = false; // Bandera para evitar clics rápidos
+
+        // Función que gira el panel de imágenes
+        AFRAME.registerComponent('image-rotator', {
             init: function() {
-                this.el.addEventListener('click', (evt) => {
-                    const transporte = this.el.getAttribute('data-transporte');
-                    if (transporte) {
-                        handleButtonClick(transporte);
-                    }
+                this.el.setAttribute('rotation', `0 ${currentIndex * -90} 0`);
+            },
+            updateIndex: function(direction) {
+                if (rotating) return; // Evitar clics rápidos
+                rotating = true;
+
+                // 0 -> 1 -> 2 -> 3 -> 0 (Siguiente)
+                // 0 <- 3 <- 2 <- 1 <- 0 (Anterior)
+                currentIndex = (currentIndex + direction + images.length) % images.length;
+                
+                // Rotación en Y: cada imagen está a 90 grados de distancia
+                const newRotationY = currentIndex * -90;
+                
+                // Animación de rotación
+                this.el.setAttribute('animation', {
+                    property: 'rotation',
+                    to: `0 ${newRotationY} 0`,
+                    dur: 500, // Duración de 500ms
+                    easing: 'easeOutQuad',
+                    loop: false
+                });
+
+                setTimeout(() => {
+                    rotating = false;
+                    // Opcional: Mostrar el nombre de la línea activa
+                    const lineNames = ["RTP", "METROBÚS", "TREN LIGERO", "CABLEBÚS"];
+                    alert(`Línea actual: ${lineNames[currentIndex]}`);
+                }, 550);
+            }
+        });
+
+        // 2. MANEJADOR DE CLICS EN BOTONES (FLECHAS)
+        AFRAME.registerComponent('nav-button-handler', {
+            schema: { direction: { type: 'int' } },
+            init: function() {
+                const rotatorEl = document.querySelector('#imagePanel');
+                this.el.addEventListener('click', () => {
+                    // Llama a la función de rotación del panel de imágenes
+                    rotatorEl.components['image-rotator'].updateIndex(this.data.direction);
                 });
             }
         });
@@ -37,43 +71,46 @@
              vr-mode-ui="enabled: false"
              device-orientation-permission-ui="enabled: false">
 
-        <a-camera active="false" 
-                  position="0 0 0"
-                  raycaster="objects: .clickable; far: 10" 
-                  cursor="rayOrigin: mouse"
-                  >
-            <a-ring color="#00FFFF" radius-inner="0.005" radius-outer="0.01" position="0 0 -1" material="shader: flat"></a-ring>
+        <a-assets>
+            <img id="rtpTexture" src="assets/linea_rtp.jpg">
+            <img id="metrobusTexture" src="assets/linea_metrobus.jpg">
+            <img id="trenLigeroTexture" src="assets/linea_trenligero.jpg">
+            <img id="cablebusTexture" src="assets/linea_cablebus.jpg">
+            
+            <a-asset-item id="flechaIzquierda" src="#box"></a-asset-item> 
+            <a-asset-item id="flechaDerecha" src="#box"></a-asset-item>
+        </a-assets>
+
+        <a-camera active="false" position="0 0 0">
+            <a-cursor raycaster="objects: .nav-button" color="#FF00FF"></a-cursor>
         </a-camera>
-        
+
         <a-entity mindar-image-target="targetIndex: 0">
             
-            <a-entity position="0 0.05 0"> 
+            <a-entity id="imagePanel" image-rotator position="0 0.4 0">
                 
-                <a-box class="clickable" data-transporte="RTP" button-click-handler
-                       position="-0.45 0.4 0.1" color="#D44646" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="METROBUS" button-click-handler
-                       position="0.45 0.4 0.1" color="#34A853" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
-                       position="-0.45 0.1 0.1" color="#4285F4" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
-                       position="0.45 0.1 0.1" color="#FBBC05" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
-                </a-box>
-
+                <a-plane src="#rtpTexture" width="0.9" height="0.6" position="0 0 0" rotation="0 0 0"></a-plane>
+                
+                <a-plane src="#metrobusTexture" width="0.9" height="0.6" position="0 0 0" rotation="0 90 0"></a-plane>
+                
+                <a-plane src="#trenLigeroTexture" width="0.9" height="0.6" position="0 0 0" rotation="0 180 0"></a-plane>
+                
+                <a-plane src="#cablebusTexture" width="0.9" height="0.6" position="0 0 0" rotation="0 270 0"></a-plane>
+                
             </a-entity>
+
+            <a-box class="nav-button" nav-button-handler="direction: -1"
+                   position="-0.7 0.4 0.1" color="#F00" 
+                   width="0.1" height="0.1" depth="0.05">
+                <a-text value="<" align="center" width="0.5" position="0 0 0.03" color="#FFF"></a-text>
+            </a-box>
+
+            <a-box class="nav-button" nav-button-handler="direction: 1"
+                   position="0.7 0.4 0.1" color="#00F" 
+                   width="0.1" height="0.1" depth="0.05">
+                <a-text value=">" align="center" width="0.5" position="0 0 0.03" color="#FFF"></a-text>
+            </a-box>
+            
         </a-entity>
     </a-scene>
 </body>
