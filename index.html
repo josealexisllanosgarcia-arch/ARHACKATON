@@ -1,85 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menú de Movilidad RA - CDMX</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    
-    <style>
-        /* Estilos para ocupar toda la pantalla y ocultar elementos de debug */
-        body { margin: 0; }
-        .mindar-ui-overlay { display: none; }
-    </style>
+    <title>Menú de Movilidad RA - CDMX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <style>
+        /* Estilos para ocupar toda la pantalla y ocultar elementos de debug */
+        body { margin: 0; }
+        .mindar-ui-overlay { display: none; }
+    </style>
 
-    <script>
-        // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
-        function handleButtonClick(transporte) {
-            // **IMPORTANTE:** Aquí defines lo que sucede realmente al presionar el botón.
-            alert('¡Abriendo información de ' + transporte + '! (Prueba Exitosa)');
-            
-            // Ejemplo de cómo abrir un enlace externo al presionar:
-            // if (transporte === 'RTP') {
-            //     window.open('https://www.rtp.cdmx.gob.mx/', '_blank');
-            // }
-        }
-        
-        // 2. COMPONENTE DE ESCUCHA DE CLICS (A-Frame requiere esto para manejar eventos)
-        AFRAME.registerComponent('button-click-handler', {
-            init: function() {
-                this.el.addEventListener('click', (evt) => {
-                    // Obtiene el nombre del transporte del atributo data-transporte
-                    const transporte = this.el.getAttribute('data-transporte');
-                    if (transporte) {
-                        handleButtonClick(transporte);
-                    }
-                });
-            }
-        });
-    </script>
+    <script>
+        // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
+        function handleButtonClick(transporte) {
+            // **IMPORTANTE:** Aquí defines lo que sucede realmente al presionar el botón.
+            alert('¡Abriendo información de ' + transporte + '! (Prueba Exitosa)');
+            
+            // Ejemplo de cómo abrir un enlace externo al presionar:
+            // if (transporte === 'RTP') {
+            //     window.open('https://www.rtp.cdmx.gob.mx/', '_blank');
+            // }
+        }
+        
+        // 2. COMPONENTE DE ESCUCHA DE CLICS (A-Frame requiere esto para manejar eventos)
+        AFRAME.registerComponent('button-click-handler', {
+            init: function() {
+                this.el.addEventListener('click', (evt) => {
+                    // Obtiene el nombre del transporte del atributo data-transporte
+                    const transporte = this.el.getAttribute('data-transporte');
+                    if (transporte) {
+                        handleButtonClick(transporte);
+                    }
+                });
+            }
+        });
+    </script>
 </head>
 <body>
-    
-    <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
-             vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false">
+    
+    <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
 
-        <a-camera active="false" position="0 0 0">
-            <a-cursor raycaster="objects: .clickable" color="#00FFFF"></a-cursor>
-        </a-camera>
+        <a-camera active="false" position="0 0 0">
+            <a-cursor raycaster="objects: .clickable" color="#00FFFF"></a-cursor>
+        </a-camera>
 
-        <a-entity mindar-image-target="targetIndex: 0">
-            
-            <a-entity position="0 0.05 0"> 
+        <a-entity mindar-image-target="targetIndex: 0">
+            
+            <a-entity position="0 0.05 0"> 
 
-                <a-box class="clickable" data-transporte="RTP" button-click-handler
-                       position="-0.3 0.25 0" color="#D44646" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
+                <a-box class="clickable" data-transporte="RTP" button-click-handler
+                       position="-0.3 0.25 0" color="#D44646" 
+                       width="0.25" height="0.1" depth="0.05">
+                    <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
+                </a-box>
 
-                <a-box class="clickable" data-transporte="METROBUS" button-click-handler
-                       position="0.3 0.25 0" color="#34A853" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
+                <a-box class="clickable" data-transporte="METROBUS" button-click-handler
+                       position="0.3 0.25 0" color="#34A853" 
+                       width="0.25" height="0.1" depth="0.05">
+                    <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
+                </a-box>
 
-                <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
-                       position="-0.3 0.05 0" color="#4285F4" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
+                <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
+                       position="-0.3 0.05 0" color="#4285F4" 
+                       width="0.25" height="0.1" depth="0.05">
+                    <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
+                </a-box>
 
-                <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
-                       position="0.3 0.05 0" color="#FBBC05" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
-                </a-box>
+                <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
+                       position="0.3 0.05 0" color="#FBBC05" 
+                       width="0.25" height="0.1" depth="0.05">
+                    <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
+                </a-box>
 
-            </a-entity>
-        </a-entity>
-    </a-scene>
+            </a-entity>
+        </a-entity>
+    </a-scene>
 </body>
 </html>
-
