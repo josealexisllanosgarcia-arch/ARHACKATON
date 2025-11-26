@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
+        /* Estilos para que la RA ocupe toda la pantalla */
         body { margin: 0; }
         .mindar-ui-overlay { display: none; }
     </style>
@@ -15,8 +16,14 @@
     <script>
         // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
         function handleButtonClick(transporte) {
-            // **IMPORTANTE:** Aquí defines lo que sucede realmente al presionar el botón.
-            alert('¡Abriendo información de ' + transporte + '! (Prueba Exitosa)');
+            // Esta función se ejecuta cuando haces clic en un botón.
+            alert('¡Has presionado el botón de ' + transporte + '! El proyecto es funcional.');
+            
+            // Aquí puedes añadir la lógica para abrir enlaces, mostrar más info 3D, etc.
+            // Ejemplo de navegación:
+            // if (transporte === 'METROBUS') {
+            //     window.open('https://www.metrobus.cdmx.gob.mx/', '_blank');
+            // }
         }
         
         // 2. COMPONENTE DE ESCUCHA DE CLICS
@@ -38,13 +45,16 @@
              vr-mode-ui="enabled: false"
              device-orientation-permission-ui="enabled: false">
 
-        <a-camera active="false" 
-                  position="0 0 0" 
-                  raycaster="objects: .clickable; far: 10" 
-                  cursor="rayOrigin: center; fuse: false"
-                  >
-        </a-camera>
+        <a-camera active="false" position="0 0 0"></a-camera>
 
+        <a-entity cursor 
+                  raycaster="objects: .clickable; far: 10" 
+                  position="0 0 -1" 
+                  geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02" 
+                  material="color: #00FFFF; shader: flat"
+                  >
+        </a-entity>
+        
         <a-entity mindar-image-target="targetIndex: 0">
             
             <a-entity position="0 0.05 0"> 
