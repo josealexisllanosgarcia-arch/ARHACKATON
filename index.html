@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menú de Movilidad RA - CDMX</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        /* Estilos para que la RA ocupe toda la pantalla */
         body { margin: 0; }
         .mindar-ui-overlay { display: none; }
     </style>
@@ -16,14 +12,7 @@
     <script>
         // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
         function handleButtonClick(transporte) {
-            // Esta función se ejecuta cuando haces clic en un botón.
-            alert('¡Has presionado el botón de ' + transporte + '! El proyecto es funcional.');
-            
-            // Aquí puedes añadir la lógica para abrir enlaces, mostrar más info 3D, etc.
-            // Ejemplo de navegación:
-            // if (transporte === 'METROBUS') {
-            //     window.open('https://www.metrobus.cdmx.gob.mx/', '_blank');
-            // }
+            alert('¡Has presionado el botón de ' + transporte + '!');
         }
         
         // 2. COMPONENTE DE ESCUCHA DE CLICS
@@ -37,6 +26,13 @@
                 });
             }
         });
+
+        // 3. FIX FINAL PARA NAVEGADORES MÓVILES (FORZAR INTERACCIÓN)
+        window.onload = function() {
+            document.body.addEventListener('touchstart', function() {
+                console.log('Touch detectado. Inicializando raycaster.');
+            });
+        };
     </script>
 </head>
 <body>
@@ -45,41 +41,35 @@
              vr-mode-ui="enabled: false"
              device-orientation-permission-ui="enabled: false">
 
-        <a-camera active="false" position="0 0 0"></a-camera>
-
-        <a-entity cursor 
+        <a-camera active="false" 
+                  position="0 0 0" 
                   raycaster="objects: .clickable; far: 10" 
-                  position="0 0 -1" 
-                  geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02" 
-                  material="color: #00FFFF; shader: flat"
+                  cursor="rayOrigin: center; fuse: false"
                   >
-        </a-entity>
+            <a-ring color="#00FFFF" radius-inner="0.005" radius-outer="0.01" position="0 0 -1" material="shader: flat"></a-ring>
+        </a-camera>
         
         <a-entity mindar-image-target="targetIndex: 0">
             
             <a-entity position="0 0.05 0"> 
                 
                 <a-box class="clickable" data-transporte="RTP" button-click-handler
-                       position="-0.35 0.3 0.1" color="#D44646" 
-                       width="0.25" height="0.1" depth="0.05">
+                       position="-0.35 0.3 0.1" color="#D44646" width="0.25" height="0.1" depth="0.05">
                     <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
                 <a-box class="clickable" data-transporte="METROBUS" button-click-handler
-                       position="0.35 0.3 0.1" color="#34A853" 
-                       width="0.25" height="0.1" depth="0.05">
+                       position="0.35 0.3 0.1" color="#34A853" width="0.25" height="0.1" depth="0.05">
                     <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
                 <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
-                       position="-0.35 0.05 0.1" color="#4285F4" 
-                       width="0.25" height="0.1" depth="0.05">
+                       position="-0.35 0.05 0.1" color="#4285F4" width="0.25" height="0.1" depth="0.05">
                     <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
                 <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
-                       position="0.35 0.05 0.1" color="#FBBC05" 
-                       width="0.25" height="0.1" depth="0.05">
+                       position="0.35 0.05 0.1" color="#FBBC05" width="0.25" height="0.1" depth="0.05">
                     <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
                 </a-box>
 
