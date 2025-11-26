@@ -1,23 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Prueba de Marcador AR.js</title>
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
+    <title>Prueba de Rastreo RA (Tarjeta CDMX) - MindAR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    
+    <style>
+        body { margin: 0; }
+        .mindar-ui-overlay { display: none; } /* Oculta la interfaz predeterminada de MindAR */
+    </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
+    
+    <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
+             vr-mode-ui="enabled: false"
+             device-orientation-permission-ui="enabled: false">
 
-    <a-scene embedded arjs='sourceType: webcam; detectionMode: mono_and_matrix; patternRatio: 0.8;'>
+        <a-camera active="false" position="0 0 0"></a-camera>
 
-        <a-marker type="pattern" url="tarjeta.patt">
-
-            <a-text 
-                value="PRUEBA EXITOSA" 
-                position="0 1 0"           rotation="-90 0 0"         scale="2.5 2.5 2.5"        align="center"             color="#00FF00">           </a-text>
-
-        </a-marker>
-
-        <a-entity camera></a-entity>
+        <a-entity mindar-image-target="targetIndex: 0">
+            
+            <a-text value="Hola, prueba exitosa" 
+                    color="#00FF00" 
+                    align="center"
+                    position="0 0.5 0" 
+                    width="1.8"
+                    rotation="0 0 0"
+                    ></a-text>
+        </a-entity>
+        
     </a-scene>
 </body>
 </html>
