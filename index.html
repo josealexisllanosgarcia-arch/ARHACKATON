@@ -18,21 +18,8 @@
         function handleButtonClick(transporte) {
             // Se ejecuta cuando haces clic.
             alert('¡Has presionado el botón: ' + transporte + '! (Prueba Final Exitosa)');
+
             
-            // Si quieres abrir una página real, puedes reemplazar el alert por:
-            /*
-            const urls = {
-                "RTP": "https://www.rtp.cdmx.gob.mx/",
-                "METROBUS": "https://www.metrobus.cdmx.gob.mx/",
-                "TREN LIGERO": "https://www.ste.cdmx.gob.mx/servicios/tren-ligero",
-                "CABLEBUS": "https://www.ste.cdmx.gob.mx/servicios/cablebus"
-            };
-            if (urls[transporte]) {
-                window.open(urls[transporte], '_blank');
-            }
-            */
-        }
-        
         // 2. COMPONENTE DE ESCUCHA DE CLICS
         AFRAME.registerComponent('button-click-handler', {
             init: function() {
@@ -100,3 +87,4 @@
     </a-scene>
 </body>
 </html>
+
