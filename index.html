@@ -12,6 +12,7 @@
         body { 
             margin: 0; 
             overflow: hidden;
+            font-family: Arial, sans-serif;
         }
         .mindar-ui-overlay { display: none; }
         
@@ -28,7 +29,22 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            font-family: Arial, sans-serif;
+            font-size: 1.2em;
+        }
+        
+        /* Mensaje de selección */
+        #selection-message {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            z-index: 9998;
+            display: none;
+            font-size: 1.1em;
         }
     </style>
 
@@ -101,23 +117,38 @@
 
         // Función de acción al hacer clic
         function handleButtonClick(transporte) {
-            alert('¡Has presionado el botón: ' + transporte + '! (Prueba Final Exitosa)');
+            // Mostrar mensaje específico según el transporte seleccionado
+            let mensaje = "";
             
-            // Aquí puedes agregar más lógica según el transporte seleccionado
             switch(transporte) {
                 case 'RTP':
-                    // Acción para RTP
+                    mensaje = "Has seleccionado RTP";
                     break;
                 case 'METROBUS':
-                    // Acción para METROBUS
+                    mensaje = "Has seleccionado METROBUS";
                     break;
                 case 'TREN LIGERO':
-                    // Acción para TREN LIGERO
+                    mensaje = "Has seleccionado TREN LIGERO";
                     break;
                 case 'CABLEBUS':
-                    // Acción para CABLEBUS
+                    mensaje = "Has seleccionado CABLEBUS";
                     break;
+                default:
+                    mensaje = "Has seleccionado una opción de transporte";
             }
+            
+            // Mostrar mensaje en pantalla
+            const messageElement = document.getElementById('selection-message');
+            messageElement.textContent = mensaje;
+            messageElement.style.display = 'block';
+            
+            // Ocultar mensaje después de 3 segundos
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+            
+            // También mostrar alerta (opcional)
+            alert(mensaje);
         }
 
         // Inicialización cuando el DOM esté listo
@@ -143,6 +174,9 @@
     <div id="loading">
         Cargando experiencia de Realidad Aumentada...
     </div>
+    
+    <!-- Mensaje de selección -->
+    <div id="selection-message"></div>
     
     <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
              vr-mode-ui="enabled: false"
