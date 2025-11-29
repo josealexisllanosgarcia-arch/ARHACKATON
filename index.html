@@ -8,105 +8,28 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        /* Estilos para que la RA ocupe toda la pantalla */
-        body { 
-            margin: 0; 
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+        /* Estilos para ocupar toda la pantalla y ocultar elementos de debug */
+        body { margin: 0; }
         .mindar-ui-overlay { display: none; }
-        
-        /* Indicador de carga */
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            font-size: 1.2em;
-        }
-        
-        /* Mensaje de selección */
-        #selection-message {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            z-index: 9998;
-            display: none;
-            font-size: 1.1em;
-        }
     </style>
 
     <script>
-        // Componente mejorado para manejar eventos táctiles
-        AFRAME.registerComponent('button-interaction', {
+        // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
+        function handleButtonClick(transporte) {
+            // **IMPORTANTE:** Aquí defines lo que sucede realmente al presionar el botón.
+            alert('¡Abriendo información de ' + transporte + '! (Prueba Exitosa)');
+            
+            // Ejemplo de cómo abrir un enlace externo al presionar:
+            // if (transporte === 'RTP') {
+            //     window.open('https://www.rtp.cdmx.gob.mx/', '_blank');
+            // }
+        }
+        
+        // 2. COMPONENTE DE ESCUCHA DE CLICS (A-Frame requiere esto para manejar eventos)
+        AFRAME.registerComponent('button-click-handler', {
             init: function() {
-                // Variables para seguimiento del toque
-                this.touchStartPos = {x: 0, y: 0};
-                this.isTouching = false;
-                
-                // Eventos táctiles
-                this.el.addEventListener('touchstart', (evt) => {
-                    evt.preventDefault();
-                    this.touchStartPos.x = evt.touches[0].clientX;
-                    this.touchStartPos.y = evt.touches[0].clientY;
-                    this.isTouching = true;
-                    
-                    // Efecto visual al tocar
-                    this.el.setAttribute('animation', {
-                        property: 'scale',
-                        to: '0.9 0.9 0.9',
-                        dur: 150,
-                        easing: 'easeInOutQuad'
-                    });
-                });
-                
-                this.el.addEventListener('touchend', (evt) => {
-                    evt.preventDefault();
-                    
-                    if (this.isTouching) {
-                        // Restaurar escala
-                        this.el.setAttribute('animation', {
-                            property: 'scale',
-                            to: '1 1 1',
-                            dur: 150,
-                            easing: 'easeInOutQuad'
-                        });
-                        
-                        // Verificar que no fue un deslizamiento (swipe)
-                        const touchEndPos = {
-                            x: evt.changedTouches[0].clientX,
-                            y: evt.changedTouches[0].clientY
-                        };
-                        
-                        const deltaX = Math.abs(touchEndPos.x - this.touchStartPos.x);
-                        const deltaY = Math.abs(touchEndPos.y - this.touchStartPos.y);
-                        
-                        // Si el movimiento fue menor a 10px, considerar como clic
-                        if (deltaX < 10 && deltaY < 10) {
-                            const transporte = this.el.getAttribute('data-transporte');
-                            if (transporte) {
-                                handleButtonClick(transporte);
-                            }
-                        }
-                    }
-                    
-                    this.isTouching = false;
-                });
-                
-                // También mantener compatibilidad con ratón
                 this.el.addEventListener('click', (evt) => {
+                    // Obtiene el nombre del transporte del atributo data-transporte
                     const transporte = this.el.getAttribute('data-transporte');
                     if (transporte) {
                         handleButtonClick(transporte);
@@ -114,117 +37,43 @@
                 });
             }
         });
-
-        // Función de acción al hacer clic
-        function handleButtonClick(transporte) {
-            // Mostrar mensaje específico según el transporte seleccionado
-            let mensaje = "";
-            
-            switch(transporte) {
-                case 'RTP':
-                    mensaje = "Has seleccionado RTP";
-                    break;
-                case 'METROBUS':
-                    mensaje = "Has seleccionado METROBUS";
-                    break;
-                case 'TREN LIGERO':
-                    mensaje = "Has seleccionado TREN LIGERO";
-                    break;
-                case 'CABLEBUS':
-                    mensaje = "Has seleccionado CABLEBUS";
-                    break;
-                default:
-                    mensaje = "Has seleccionado una opción de transporte";
-            }
-            
-            // Mostrar mensaje en pantalla
-            const messageElement = document.getElementById('selection-message');
-            messageElement.textContent = mensaje;
-            messageElement.style.display = 'block';
-            
-            // Ocultar mensaje después de 3 segundos
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 3000);
-            
-            // También mostrar alerta (opcional)
-            alert(mensaje);
-        }
-
-        // Inicialización cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ocultar indicador de carga cuando la escena esté lista
-            const scene = document.querySelector('a-scene');
-            scene.addEventListener('loaded', function() {
-                const loading = document.getElementById('loading');
-                if (loading) {
-                    loading.style.display = 'none';
-                }
-            });
-            
-            // Forzar la inicialización del raycaster en móviles
-            document.body.addEventListener('touchstart', function() {
-                console.log('Touch detectado. Inicializando interacciones.');
-            });
-        });
     </script>
 </head>
 <body>
-    <!-- Indicador de carga -->
-    <div id="loading">
-        Cargando experiencia de Realidad Aumentada...
-    </div>
-    
-    <!-- Mensaje de selección -->
-    <div id="selection-message"></div>
     
     <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
              vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false"
-             renderer="colorManagement: true;">
+             device-orientation-permission-ui="enabled: false">
 
-        <!-- Cámara con cursor optimizado para móviles -->
-        <a-entity camera="active: true" 
-                  position="0 0 0"
-                  look-controls="pointerLockEnabled: false">
-            <a-entity cursor="fuse: true; fuseTimeout: 500"
-                      position="0 0 -1"
-                      geometry="primitive: ring; radiusInner: 0.008; radiusOuter: 0.012"
-                      material="color: cyan; shader: flat"
-                      animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-                      raycaster="objects: .interactible; far: 100">
-            </a-entity>
-        </a-entity>
-        
+        <a-camera active="false" position="0 0 0">
+            <a-cursor raycaster="objects: .clickable" color="#00FFFF"></a-cursor>
+        </a-camera>
+
         <a-entity mindar-image-target="targetIndex: 0">
+            
             <a-entity position="0 0.05 0"> 
-                
-                <!-- Botones con el componente mejorado -->
-                <a-box class="interactible" data-transporte="RTP" button-interaction
-                       position="-0.45 0.4 0.1" color="#D44646" 
-                       width="0.25" height="0.1" depth="0.05"
-                       animation="property: components.material.material.color; type: color; from: #D44646; to: #FF6B6B; startEvents: mouseenter; dur: 200; from: #FF6B6B; to: #D44646; startEvents: mouseleave; dur: 200">
+
+                <a-box class="clickable" data-transporte="RTP" button-click-handler
+                       position="-0.3 0.25 0" color="#D44646" 
+                       width="0.25" height="0.1" depth="0.05">
                     <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
-                <a-box class="interactible" data-transporte="METROBUS" button-interaction
-                       position="0.45 0.4 0.1" color="#34A853" 
-                       width="0.25" height="0.1" depth="0.05"
-                       animation="property: components.material.material.color; type: color; from: #34A853; to: #6BCF7F; startEvents: mouseenter; dur: 200; from: #6BCF7F; to: #34A853; startEvents: mouseleave; dur: 200">
+                <a-box class="clickable" data-transporte="METROBUS" button-click-handler
+                       position="0.3 0.25 0" color="#34A853" 
+                       width="0.25" height="0.1" depth="0.05">
                     <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
-                <a-box class="interactible" data-transporte="TREN LIGERO" button-interaction
-                       position="-0.45 0.1 0.1" color="#4285F4" 
-                       width="0.25" height="0.1" depth="0.05"
-                       animation="property: components.material.material.color; type: color; from: #4285F4; to: #6EA8FF; startEvents: mouseenter; dur: 200; from: #6EA8FF; to: #4285F4; startEvents: mouseleave; dur: 200">
+                <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
+                       position="-0.3 0.05 0" color="#4285F4" 
+                       width="0.25" height="0.1" depth="0.05">
                     <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
                 </a-box>
 
-                <a-box class="interactible" data-transporte="CABLEBUS" button-interaction
-                       position="0.45 0.1 0.1" color="#FBBC05" 
-                       width="0.25" height="0.1" depth="0.05"
-                       animation="property: components.material.material.color; type: color; from: #FBBC05; to: #FFD666; startEvents: mouseenter; dur: 200; from: #FFD666; to: #FBBC05; startEvents: mouseleave; dur: 200">
+                <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
+                       position="0.3 0.05 0" color="#FBBC05" 
+                       width="0.25" height="0.1" depth="0.05">
                     <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
                 </a-box>
 
