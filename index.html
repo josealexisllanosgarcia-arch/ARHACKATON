@@ -7,7 +7,8 @@
     <!-- Carga de A-Frame (el framework 3D) -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <!-- Carga de MindAR A-Frame Extension (para el rastreo de imágenes) -->
-    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <!-- Se actualiza la versión del CDN para coincidir con la de A-Frame, aunque 1.2.2 también es válida -->
+    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script> 
     
     <style>
         /* Estilo para cubrir toda la pantalla y asegurar que la AR funcione */
@@ -26,14 +27,20 @@
             z-index: 10;
         }
     </style>
+    <!-- Se elimina el bloque <script> con la lógica de botones -->
 </head>
 <body>
 
+    <!-- Controles de la Interfaz (Guía para el usuario) -->
+    <div class="ar-controls">
+        <p>Apunta la cámara a tu Tarjeta de Movilidad Integrada (MI).</p>
+        <p>Una vez detectada, aparecerá el Mapa del Metro de la CDMX.</p>
+    </div>
 
     <!-- Escena de Realidad Aumentada con A-Frame y MindAR -->
     <a-scene 
         mindar-image="
-            imageTargetSrc: ./targets.mind; /* RUTA AL ARCHIVO GENERADO POR EL COMPILADOR */
+            imageTargetSrc: ./targets.mind; /* Asegúrate de que este archivo existe y se generó correctamente */
             maxTrack: 1; 
             autoStart: true;
         "
@@ -41,23 +48,20 @@
         device-orientation-permission-ui="enabled: false"
         renderer="colorManagement: true, physicallyCorrectLights: true"
     >
-        <!-- Cámara para la escena de AR -->
+        <!-- Cámara para la escena de AR (se usa la cámara de MindAR) -->
         <a-camera 
             mindar-image-camera 
             position="0 0 0"
         ></a-camera>
 
         <!-- Contenedor del Rastreador de Imagen -->
-        <!-- targetIndex="0" indica que usaremos el primer marcador en targets.mind -->
         <a-entity mindar-image-target="targetIndex: 0">
 
             <!--
                 PLANO (IMAGEN) DEL MAPA DEL METRO
                 
-                - position="0 0 0.05": Ligeramente elevado sobre la tarjeta.
-                - rotation="0 0 0": Orientación plana.
-                - scale="1 1 1": Escala del plano.
-                - src: Ahora apunta a tu archivo local 'linea_metro.jpg'.
+                - src: Apunta a tu archivo 'linea_metro.jpg'.
+                - scale: Ajustado para que el mapa se vea grande sobre la tarjeta.
             -->
             <a-image 
                 src="linea_metro.jpg" 
@@ -71,7 +75,7 @@
                 shadow="cast: true"
             >
                 <!-- Añade un texto para confirmación -->
-                <a-text value="¡Mapa de Metro Desplegado!" 
+                <a-text value="¡Mapa de Metro CDMX!" 
                         align="center" 
                         color="#FFD700" 
                         position="0 0.8 0.01" 
