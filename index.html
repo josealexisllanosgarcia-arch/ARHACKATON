@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
     <style>
+        /* (Se mantiene el estilo de la pantalla de carga) */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -33,6 +34,10 @@
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false">
         
+        <div id="loading-screen" class="loading-screen">
+            Cargando la Realidad Aumentada del Metro... 🚇
+        </div>
+
         <a-assets>
             <img id="mapa-metro-asset" src="./mapa_metro_cdmx.png"> 
         </a-assets>
@@ -45,10 +50,16 @@
         <a-entity mindar-image-target="targetIndex: 0">
             
             <a-plane
-                src="#mapa-metro-asset"      position="0 0 0.01"          rotation="-90 0 0"           width="1.4"                  height="1.0"                 color="#FFFFFF"              >
+                src="#mapa-metro-asset"      
+                position="0 0 0.01"          
+                rotation="-90 0 0"           
+                width="1.4"                  
+                height="1.0"                 
+                color="#FFFFFF"              
+                >
             </a-plane>
 
-            </a-entity>
+        </a-entity>
 
     </a-scene>
 </body>
