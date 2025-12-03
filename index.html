@@ -1,68 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Redirección Automática RA - CDMX</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR: Mapa del Metro en Tarjeta MI</title>
+    <!-- Carga de A-Frame (el framework 3D) -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <!-- Carga de MindAR A-Frame Extension (para el rastreo de imágenes) -->
+    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        /* Oculta el cursor o cualquier elemento de UI innecesario */
-        body { margin: 0; }
-        .mindar-ui-overlay { display: none; }
+        /* Estilo para cubrir toda la pantalla y asegurar que la AR funcione */
+        body { margin: 0; overflow: hidden; }
+        .ar-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 10px;
+            font-family: sans-serif;
+            text-align: center;
+            z-index: 10;
+        }
     </style>
-
-    <script>
-        // Bandera para asegurar que la redirección solo ocurra una vez
-        let redirected = false; 
-
-        // 1. COMPONENTE DE REDIRECCIÓN AUTOMÁTICA
-        AFRAME.registerComponent('auto-redirect', {
-            init: function() {
-                const target = this.el;
-                const redirectURL = "https://www.youtube.com/watch?v=AFM7_mhDQnw&list=RDAFM7_mhDQnw&start_radio=1"; // <--- CAMBIA ESTA URL
-
-                // Escuchar el evento cuando la tarjeta es encontrada (rastreada)
-                target.addEventListener('targetFound', () => {
-                    if (!redirected) {
-                        redirected = true;
-                        
-                        // Opcional: Mostrar una alerta antes de redirigir
-                        // alert('Tarjeta detectada. Redirigiendo a la web de Movilidad CDMX...');
-
-                        // Abrir la URL en la misma pestaña
-                        window.location.href = redirectURL; 
-                        
-                        // Si quieres abrirla en una pestaña nueva, usa:
-                        // window.open(redirectURL, '_blank');
-                    }
-                });
-                
-                // Opcional: Escuchar el evento cuando la tarjeta se pierde
-                target.addEventListener('targetLost', () => {
-                    // Aquí podrías poner lógica si quieres volver a la pantalla de la cámara
-                    // si la pierdes antes de que cargue la web, pero no suele ser necesario.
-                });
-            }
-        });
-    </script>
 </head>
 <body>
-    
-    <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
-             vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false">
 
-        <a-camera active="false" position="0 0 0"></a-camera>
+    <!-- Controles de la Interfaz (Guía para el usuario) -->
+    <div class="ar-controls">
+        <p>Apunta la cámara a tu Tarjeta de Movilidad Integrada (MI).</p>
+        <p>Una vez detectada, aparecerá el Mapa del Metro de la CDMX.</p>
+    </div>
 
-        <a-entity mindar-image-target="targetIndex: 0" auto-redirect>
+    <!-- Escena de Realidad Aumentada con A-Frame y MindAR -->
+    <a-scene 
+        mindar-image="
+            imageTargetSrc: ./tarjeta_cdmx.mind; /* RUTA AL ARCHIVO GENERADO POR EL COMPILADOR */
+            maxTrack: 1; 
+            autoStart: true;
+        "
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false"
+        renderer="colorManagement: true, physicallyCorrectLights: true"
+    >
+        <!-- Cámara para la escena de AR -->
+        <a-camera 
+            mindar-image-camera 
+            position="0 0 0"
+        ></a-camera>
+
+        <!-- Contenedor del Rastreador de Imagen -->
+        <!-- targetIndex="0" indica que usaremos el primer marcador en targets.mind -->
+        <a-entity mindar-image-target="targetIndex: 0">
+
+            <!--
+                PLANO (IMAGEN) DEL MAPA DEL METRO
+                
+                - position="0 0 0.05": Ligeramente elevado sobre la tarjeta.
+                - rotation="0 0 0": Orientación plana.
+                - scale="1 1 1": Escala del plano.
+                - src: Reemplaza esta URL por la URL real de tu imagen del Mapa del Metro de CDMX.
+            -->
+            <a-image 
+                src="assets/linea_rtp.jpg" 
+                position="0 0 0.05" 
+                height="1" 
+                width="1"
+                rotation="0 0 0" 
+                scale="1.5 1.5 1.5"
+                geometry="primitive: plane; width: 1.5; height: 1.5"
+                material="shader: standard"
+                shadow="cast: true"
+            >
+                <!-- Añade un texto para confirmación -->
+                <a-text value="¡Mapa de Metro Desplegado!" 
+                        align="center" 
+                        color="#FFD700" 
+                        position="0 0.8 0.01" 
+                        width="1.5">
+                </a-text>
+            </a-image>
             
-            <a-text value="ESCANEO DETECTADO. REDIRECCIONANDO..." 
-                    position="0 0.5 0" align="center" width="1" color="#FFF"></a-text>
-
         </a-entity>
+
     </a-scene>
+
 </body>
 </html>
 
