@@ -29,16 +29,11 @@
 </head>
 <body>
 
-    <!-- Controles de la Interfaz (Guía para el usuario) -->
-    <div class="ar-controls">
-        <p>Apunta la cámara a tu Tarjeta de Movilidad Integrada (MI).</p>
-        <p>Una vez detectada, aparecerá el Mapa del Metro de la CDMX.</p>
-    </div>
 
     <!-- Escena de Realidad Aumentada con A-Frame y MindAR -->
     <a-scene 
         mindar-image="
-            imageTargetSrc: ./tarjeta_cdmx.mind; /* RUTA AL ARCHIVO GENERADO POR EL COMPILADOR */
+            imageTargetSrc: ./targets.mind; /* RUTA AL ARCHIVO GENERADO POR EL COMPILADOR */
             maxTrack: 1; 
             autoStart: true;
         "
@@ -62,10 +57,10 @@
                 - position="0 0 0.05": Ligeramente elevado sobre la tarjeta.
                 - rotation="0 0 0": Orientación plana.
                 - scale="1 1 1": Escala del plano.
-                - src: Reemplaza esta URL por la URL real de tu imagen del Mapa del Metro de CDMX.
+                - src: Ahora apunta a tu archivo local 'linea_metro.jpg'.
             -->
             <a-image 
-                src="assets/linea_rtp.jpg" 
+                src="linea_metro.jpg" 
                 position="0 0 0.05" 
                 height="1" 
                 width="1"
@@ -90,4 +85,3 @@
 
 </body>
 </html>
-
