@@ -1,83 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Menú de Movilidad RA - CDMX</title>
+    <title>Mapa Fijo RA - CDMX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     
+    <!-- Carga de A-Frame -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <!-- Carga de MindAR A-Frame Extension -->
+    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        /* Estilos para ocupar toda la pantalla y ocultar elementos de debug */
-        body { margin: 0; }
+        /* Estilos para ocupar toda la pantalla */
+        body { margin: 0; background-color: #111; }
+        
+        /* Oculta los elementos de UI nativos de MindAR para usar los nuestros */
         .mindar-ui-overlay { display: none; }
+        
+        /* Contenedor de mensajes de usuario (arriba de la cámara) */
+        .ar-controls {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 10px;
+            font-family: sans-serif;
+            text-align: center;
+            z-index: 999; /* Asegura que esté encima de todo */
+            border: 2px solid #00FFFF;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            max-width: 80%;
+        }
+
+        /* Estilo para el mensaje de carga */
+        #loading-message {
+            font-size: 1.2rem;
+            color: #00FFFF;
+        }
     </style>
 
     <script>
-        // 1. FUNCIÓN DE ACCIÓN AL HACER CLIC
-        function handleButtonClick(transporte) {
-            // *IMPORTANTE:* Aquí defines lo que sucede realmente al presionar el botón.
-            alert('¡Abriendo información de ' + transporte + '! (Prueba Exitosa)');
+        // Esta función se ejecuta cuando la escena de A-Frame está lista
+        document.addEventListener('DOMContentLoaded', () => {
+            const sceneEl = document.querySelector('a-scene');
+            const controlsEl = document.querySelector('.ar-controls');
+            const loadingMessage = document.getElementById('loading-message');
             
-            // Ejemplo de cómo abrir un enlace externo al presionar:
-            // if (transporte === 'RTP') {
-            //     window.open('https://www.rtp.cdmx.gob.mx/', '_blank');
-            // }
-        }
-        
-        // 2. COMPONENTE DE ESCUCHA DE CLICS (A-Frame requiere esto para manejar eventos)
-        AFRAME.registerComponent('button-click-handler', {
-            init: function() {
-                this.el.addEventListener('click', (evt) => {
-                    // Obtiene el nombre del transporte del atributo data-transporte
-                    const transporte = this.el.getAttribute('data-transporte');
-                    if (transporte) {
-                        handleButtonClick(transporte);
-                    }
-                });
+            // 1. Mostrar mensaje de que la cámara está iniciando
+            loadingMessage.textContent = "Iniciando cámara y solicitando permisos...";
+            
+            // 2. Evento que se dispara cuando MindAR está listo (incluye la cámara)
+            sceneEl.addEventListener('mindar-image-initialized', (evt) => {
+                loadingMessage.textContent = "Cámara lista. Por favor, apunta a la Tarjeta MI.";
+                
+                // Opcional: Ocultar el mensaje después de unos segundos
+                setTimeout(() => {
+                    controlsEl.style.display = 'none';
+                }, 4000);
+            });
+
+            // 3. Manejo de errores
+            sceneEl.addEventListener('mindar-image-error', (evt) => {
+                loadingMessage.textContent = "¡Error al iniciar la Realidad Aumentada! Posibles causas: 1. No se pudo cargar 'assets/tarjeta_cdmx.mind'. 2. No se dieron permisos de cámara. 3. No se está ejecutando desde un servidor HTTPS.";
+                controlsEl.style.display = 'block';
+                controlsEl.style.background = 'rgba(255, 0, 0, 0.8)';
+            });
+        });
+
+        // 4. Fallback de alerta si la página no tiene HTTPS o falla el permiso (esto puede ser molesto, usar solo si es necesario)
+        /*
+        window.addEventListener('load', () => {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(() => console.log('Cámara OK'))
+                    .catch((err) => {
+                        console.error('Error de cámara:', err);
+                        // Este alert debe ser reemplazado por un modal en producción
+                        alert("ERROR: La cámara no se pudo iniciar. Asegúrate de estar en un servidor HTTPS."); 
+                    });
             }
         });
+        */
     </script>
 </head>
 <body>
     
-    <a-scene mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
-             vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false">
+    <!-- Controles de la Interfaz (Guía para el usuario y mensajes de estado) -->
+    <div class="ar-controls">
+        <p id="loading-message">Cargando aplicación de Realidad Aumentada...</p>
+    </div>
 
-        <a-camera active="false" position="0 0 0">
-            <a-cursor raycaster="objects: .clickable" color="#00FFFF"></a-cursor>
-        </a-camera>
+    <a-scene 
+        mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        renderer="colorManagement: true, physicallyCorrectLights: true"
+    >
 
+        <a-assets>
+            <!-- Define tu imagen del mapa aquí. Asegúrate que la ruta 'assets/linea_rtp.jpg' sea correcta. -->
+            <img id="mapaTexture" src="assets/linea_rtp.jpg">
+        </a-assets>
+
+        <!-- La cámara de MindAR es la que gestiona el flujo de video y permisos -->
+        <a-camera mindar-image-camera active="true" position="0 0 0"></a-camera>
+
+        <!-- Contenedor del Rastreador de Imagen -->
         <a-entity mindar-image-target="targetIndex: 0">
             
-            <a-entity position="0 0.05 0"> 
-
-                <a-box class="clickable" data-transporte="RTP" button-click-handler
-                       position="-0.3 0.25 0" color="#D44646" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="RTP" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="METROBUS" button-click-handler
-                       position="0.3 0.25 0" color="#34A853" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="METROBUS" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="TREN LIGERO" button-click-handler
-                       position="-0.3 0.05 0" color="#4285F4" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="TREN LIGERO" align="center" width="0.8" position="0 0 0.03" color="#FFF"></a-text>
-                </a-box>
-
-                <a-box class="clickable" data-transporte="CABLEBUS" button-click-handler
-                       position="0.3 0.05 0" color="#FBBC05" 
-                       width="0.25" height="0.1" depth="0.05">
-                    <a-text value="CABLEBUS" align="center" width="0.8" position="0 0 0.03" color="#000"></a-text>
-                </a-box>
-
+            <a-entity position="0 0.05 0">
+                
+                <!-- Única imagen que se mostrará sobre la tarjeta -->
+                <a-image 
+                    src="#mapaTexture" 
+                    width="1.2" 
+                    height="0.8" 
+                    position="0 0 0" 
+                    rotation="0 0 0"
+                    scale="1 1 1"
+                    geometry="primitive: plane; width: 1.2; height: 0.8"
+                    material="shader: standard"
+                >
+                    <!-- Título de confirmación sobre el mapa -->
+                    <a-text 
+                        value="MAPA DEL METRO CDMX" 
+                        align="center" 
+                        width="1.5" 
+                        position="0 0.45 0.01" 
+                        color="#FFFFFF"
+                        background-color="#000000"
+                        opacity="0.7">
+                    </a-text>
+                </a-image>
+                
             </a-entity>
+
         </a-entity>
     </a-scene>
 </body>
