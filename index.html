@@ -1,143 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mapa Fijo RA - CDMX</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>Tarjeta MI - Mapa del Metro en AR</title>
     
-    <!-- Carga de A-Frame -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <!-- Carga de MindAR A-Frame Extension -->
-    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
-    <style>
-        /* Estilos para ocupar toda la pantalla */
-        body { margin: 0; background-color: #111; }
-        
-        /* Oculta los elementos de UI nativos de MindAR para usar los nuestros */
-        .mindar-ui-overlay { display: none; }
-        
-        /* Contenedor de mensajes de usuario (arriba de la cámara) */
-        .ar-controls {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 10px;
-            font-family: sans-serif;
-            text-align: center;
-            z-index: 999; /* Asegura que esté encima de todo */
-            border: 2px solid #00FFFF;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-            max-width: 80%;
-        }
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-        /* Estilo para el mensaje de carga */
-        #loading-message {
-            font-size: 1.2rem;
-            color: #00FFFF;
+    <style>
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            z-index: 1000;
         }
     </style>
-
-    <script>
-        // Esta función se ejecuta cuando la escena de A-Frame está lista
-        document.addEventListener('DOMContentLoaded', () => {
-            const sceneEl = document.querySelector('a-scene');
-            const controlsEl = document.querySelector('.ar-controls');
-            const loadingMessage = document.getElementById('loading-message');
-            
-            // 1. Mostrar mensaje de que la cámara está iniciando
-            loadingMessage.textContent = "Iniciando cámara y solicitando permisos...";
-            
-            // 2. Evento que se dispara cuando MindAR está listo (incluye la cámara)
-            sceneEl.addEventListener('mindar-image-initialized', (evt) => {
-                loadingMessage.textContent = "Cámara lista. Por favor, apunta a la Tarjeta MI.";
-                
-                // Opcional: Ocultar el mensaje después de unos segundos
-                setTimeout(() => {
-                    controlsEl.style.display = 'none';
-                }, 4000);
-            });
-
-            // 3. Manejo de errores
-            sceneEl.addEventListener('mindar-image-error', (evt) => {
-                loadingMessage.textContent = "¡Error al iniciar la Realidad Aumentada! Posibles causas: 1. No se pudo cargar 'assets/tarjeta_cdmx.mind'. 2. No se dieron permisos de cámara. 3. No se está ejecutando desde un servidor HTTPS.";
-                controlsEl.style.display = 'block';
-                controlsEl.style.background = 'rgba(255, 0, 0, 0.8)';
-            });
-        });
-
-        // 4. Fallback de alerta si la página no tiene HTTPS o falla el permiso (esto puede ser molesto, usar solo si es necesario)
-        /*
-        window.addEventListener('load', () => {
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(() => console.log('Cámara OK'))
-                    .catch((err) => {
-                        console.error('Error de cámara:', err);
-                        // Este alert debe ser reemplazado por un modal en producción
-                        alert("ERROR: La cámara no se pudo iniciar. Asegúrate de estar en un servidor HTTPS."); 
-                    });
-            }
-        });
-        */
-    </script>
 </head>
 <body>
-    
-    <!-- Controles de la Interfaz (Guía para el usuario y mensajes de estado) -->
-    <div class="ar-controls">
-        <p id="loading-message">Cargando aplicación de Realidad Aumentada...</p>
-    </div>
 
     <a-scene 
-        mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
+        mindar-image="imageTargetSrc: ./mapa_del_metro.mind; showStats: false; uiLoading: #loading-screen;"
         vr-mode-ui="enabled: false"
-        device-orientation-permission-ui="enabled: false"
-        renderer="colorManagement: true, physicallyCorrectLights: true"
-    >
+        device-orientation-permission-ui="enabled: false">
+        
+        <div id="loading-screen" class="loading-screen">
+            Cargando la Realidad Aumentada del Metro... 🚇
+        </div>
 
         <a-assets>
-            <!-- Define tu imagen del mapa aquí. Asegúrate que la ruta 'assets/linea_rtp.jpg' sea correcta. -->
-            <img id="mapaTexture" src="assets/linea_rtp.jpg">
+            <img id="mapa-metro-asset" src="ruta/a/tu/imagen/del/mapa.png">
         </a-assets>
 
-        <!-- La cámara de MindAR es la que gestiona el flujo de video y permisos -->
-        <a-camera mindar-image-camera active="true" position="0 0 0"></a-camera>
+        <a-camera 
+            position="0 0 0" 
+            look-controls="enabled: false">
+        </a-camera>
 
-        <!-- Contenedor del Rastreador de Imagen -->
         <a-entity mindar-image-target="targetIndex: 0">
             
-            <a-entity position="0 0.05 0">
-                
-                <!-- Única imagen que se mostrará sobre la tarjeta -->
-                <a-image 
-                    src="#mapaTexture" 
-                    width="1.2" 
-                    height="0.8" 
-                    position="0 0 0" 
-                    rotation="0 0 0"
-                    scale="1 1 1"
-                    geometry="primitive: plane; width: 1.2; height: 0.8"
-                    material="shader: standard"
-                >
-                    <!-- Título de confirmación sobre el mapa -->
-                    <a-text 
-                        value="MAPA DEL METRO CDMX" 
-                        align="center" 
-                        width="1.5" 
-                        position="0 0.45 0.01" 
-                        color="#FFFFFF"
-                        background-color="#000000"
-                        opacity="0.7">
-                    </a-text>
-                </a-image>
-                
-            </a-entity>
+            <a-plane
+                src="#mapa-metro-asset"
+                position="0 0 0.01"
+                rotation="-90 0 0"
+                width="1.0"
+                height="0.8"
+                color="#4CAF50"  >
+            </a-plane>
+
+            <a-text
+                value="¡Mapa del Metro CDMX en AR!"
+                position="0 0.6 0.02"
+                width="2"
+                align="center"
+                color="#FFFFFF"
+                rotation="-90 0 0">
+            </a-text>
 
         </a-entity>
+
     </a-scene>
 </body>
 </html>
