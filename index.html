@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR: Mapa del Metro en Tarjeta MI</title>
-    <!-- Carga de A-Frame (el framework 3D) -->
+    <title>Mapa Fijo RA - CDMX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Carga de A-Frame -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <!-- Carga de MindAR A-Frame Extension (para el rastreo de imágenes) -->
-    <!-- Se actualiza la versión del CDN para coincidir con la de A-Frame, aunque 1.2.2 también es válida -->
-    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.2/dist/mindar-image-aframe.prod.js"></script> 
+    <!-- Carga de MindAR A-Frame Extension -->
+    <script src="https://cdn.jsdelivr.net/npm/mindar-image@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        /* Estilo para cubrir toda la pantalla y asegurar que la AR funcione */
-        body { margin: 0; overflow: hidden; }
+        /* Estilos para ocupar toda la pantalla */
+        body { margin: 0; }
+        .mindar-ui-overlay { display: none; }
         .ar-controls {
             position: fixed;
             bottom: 20px;
@@ -27,65 +27,61 @@
             z-index: 10;
         }
     </style>
-    <!-- Se elimina el bloque <script> con la lógica de botones -->
 </head>
 <body>
-
+    
     <!-- Controles de la Interfaz (Guía para el usuario) -->
     <div class="ar-controls">
         <p>Apunta la cámara a tu Tarjeta de Movilidad Integrada (MI).</p>
-        <p>Una vez detectada, aparecerá el Mapa del Metro de la CDMX.</p>
+        <p>Aparecerá el Mapa del Metro de la CDMX.</p>
     </div>
 
-    <!-- Escena de Realidad Aumentada con A-Frame y MindAR -->
     <a-scene 
-        mindar-image="
-            imageTargetSrc: ./targets.mind; /* Asegúrate de que este archivo existe y se generó correctamente */
-            maxTrack: 1; 
-            autoStart: true;
-        "
-        vr-mode-ui="enabled: false" 
+        mindar-image="imageTargetSrc: assets/tarjeta_cdmx.mind;"
+        vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
         renderer="colorManagement: true, physicallyCorrectLights: true"
     >
-        <!-- Cámara para la escena de AR (se usa la cámara de MindAR) -->
-        <a-camera 
-            mindar-image-camera 
-            position="0 0 0"
-        ></a-camera>
+
+        <a-assets>
+            <!-- Define tu imagen del mapa aquí -->
+            <img id="mapaTexture" src="assets/linea_rtp.jpg">
+        </a-assets>
+
+        <!-- La cámara ya no necesita un cursor, solo sigue la escena -->
+        <a-camera mindar-image-camera active="false" position="0 0 0"></a-camera>
 
         <!-- Contenedor del Rastreador de Imagen -->
         <a-entity mindar-image-target="targetIndex: 0">
-
-            <!--
-                PLANO (IMAGEN) DEL MAPA DEL METRO
-                
-                - src: Apunta a tu archivo 'linea_metro.jpg'.
-                - scale: Ajustado para que el mapa se vea grande sobre la tarjeta.
-            -->
-            <a-image 
-                src="linea_metro.jpg" 
-                position="0 0 0.05" 
-                height="1" 
-                width="1"
-                rotation="0 0 0" 
-                scale="1.5 1.5 1.5"
-                geometry="primitive: plane; width: 1.5; height: 1.5"
-                material="shader: standard"
-                shadow="cast: true"
-            >
-                <!-- Añade un texto para confirmación -->
-                <a-text value="¡Mapa de Metro CDMX!" 
-                        align="center" 
-                        color="#FFD700" 
-                        position="0 0.8 0.01" 
-                        width="1.5">
-                </a-text>
-            </a-image>
             
+            <a-entity position="0 0.05 0">
+                
+                <!-- Única imagen que se mostrará sobre la tarjeta -->
+                <a-image 
+                    src="#mapaTexture" 
+                    width="1.2" 
+                    height="0.8" 
+                    position="0 0 0" 
+                    rotation="0 0 0"
+                    scale="1 1 1"
+                    geometry="primitive: plane; width: 1.2; height: 0.8"
+                    material="shader: standard"
+                >
+                    <!-- Título de confirmación sobre el mapa -->
+                    <a-text 
+                        value="MAPA DEL METRO CDMX" 
+                        align="center" 
+                        width="1.5" 
+                        position="0 0.45 0.01" 
+                        color="#FFFFFF"
+                        background-color="#000000"
+                        opacity="0.7">
+                    </a-text>
+                </a-image>
+                
+            </a-entity>
+
         </a-entity>
-
     </a-scene>
-
 </body>
 </html>
